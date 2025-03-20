@@ -374,7 +374,7 @@ def Set_up_Printed_paper(value, w, h, _width, _height, template_name):
     return style(width=f"{width_mm}mm", height=f"{height_mm}mm")
 
 
-# 修改拖拽的组件
+# 修改并且保存拖拽的组件
 @app.callback(
     Input({"type": "RND_Button_Confirm", "id": ALL}, "nClicks"),
     State({"type": "RND_FORM_DATA", "id": ALL}, "values"),
@@ -541,6 +541,55 @@ def RND_Button_Confirm(nClicks, values, table_data, load_template_input):
     finally:
         # 关闭数据库会话，释放资源
         session.close()
+
+
+# 移除组件并且删除组件
+@app.callback(
+    Output("listen-drop-target", "children", allow_duplicate=True),
+    Output("component-edit-container", "children", allow_duplicate=True),
+    Input({"type": "RND_Button_Cancel", "id": ALL}, "nClicks"),
+    State("listen-drop-target", "children"),
+    State({"type": "RND_FORM_DATA", "id": ALL}, "values"),
+    prevent_initial_call=True,
+)
+def remove_component_and_delete(n_clicks, children, values):
+    if not n_clicks[0]:  # 如果没有点击按钮，则不执行任何操作
+        return dash.no_update
+
+    # 组件ID = {"type": "RND", "id": values[0]["组件ID"]}
+
+    target_id = values[0]["组件ID"]  # 要删除的组件ID
+    # 调试信息
+    # for child in children:
+    #     child_id = child.get("props", {}).get("id", {}).get("id", None)
+    # logger.debug(f"检查组件ID: {child_id}")
+
+    try:
+        session = Session()
+        # 检查并删除
+        existing = (
+            session.query(ComponentLayout).filter_by(component_id=target_id).first()
+        )
+        if existing:
+            session.delete(existing)
+            session.commit()
+        else:
+            # return f"未找到 component_id 为 {target_id} 的记录"
+            return dash.no_update
+    except Exception as e:
+        session.rollback()  # 出错时回滚
+        return dash.no_update
+    finally:
+        session.close()  # 确保关闭会话
+
+        # 过滤掉目标ID的组件
+        updated_children = [
+            child
+            for child in children
+            if child.get("props", {}).get("id", {}).get("id", None) != target_id
+        ]
+        # logger.debug(f"更新后的children: {updated_children}")
+        return updated_children, []
 
 
 # 加载模板
