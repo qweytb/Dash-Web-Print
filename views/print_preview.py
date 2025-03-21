@@ -42,14 +42,6 @@ def PrintPreview(href):
             "qrcode_url": "https://example.com/invoice/INV-001",
         }
 
-        # 如果提供了 JSON 数据，尝试解析
-        # json_data = {}
-        # if json_data_str:
-        #     try:
-        #         json_data = json.loads(json_data_str)
-        #     except json.JSONDecodeError:
-        #         return dash.no_update
-
         # print("这是输入的json数据", json_data)
         try:
             # 创建数据库会话
@@ -85,8 +77,8 @@ def PrintPreview(href):
                 rendered_comp = render_component(
                     component.component_id,  # 组件的唯一标识符
                     component.layout_data,  # 组件的布局数据（JSON 格式）
-                    True,  # 新增：禁用拖拽功能
-                    json_data,  # 新增：传递 JSON 数据
+                    disableDragging=True,  # 新增：禁用拖拽功能
+                    json_data=json_data,  # 新增：传递 JSON 数据
                 )
                 # 如果渲染成功，则添加到列表中
                 if rendered_comp:
