@@ -32,157 +32,167 @@ from configs.drag_and_drop_config import (
     prevent_initial_call=True,
 )
 def listen_drop_event(dropEvent, children):
-    """
-    {
-    "time": 1741185250633,
-    "data": {},
-    "pageX": 734,
-    "pageY": 329,
-    "clientX": 734,
-    "clientY": 329,
-    "screenX": 734,
-    "screenY": 416
-    }
-    """
-    pageX = dropEvent["pageX"] - 340
-    pageY = dropEvent["pageY"] - 140
-    data = dropEvent["data"]["info"]
-
     uuid = str(uuid4())
+    component = render_component(uuid, drop_data=dropEvent, disableDragging=False)
+    return [component] if children is None else [*children, component]
 
-    if data == "横线":
-        拖拽模块 = fuc.FefferyRND(
-            [
-                html.Div(
-                    key=uuid,
-                    style=style(
-                        width="100%",
-                        # 上边框 黑色
-                        borderTop="2px solid #000",
-                    ),
-                )
-            ],
-            key=uuid + "+横线",
-            id={"type": "RND", "id": uuid},
-            size={"width": 100, "height": 2},
-            maxHeight=2,
-            position={"x": pageX, "y": pageY},
-            direction=["right", "left"],
-            bounds="parent",
-            selected=True,
-        )
-    elif data == "竖线":
-        拖拽模块 = fuc.FefferyRND(
-            [
-                html.Div(
-                    key=uuid,
-                    style=style(
-                        height="100%",
-                        # 左边框 黑色
-                        borderLeft="2px solid #000",
-                    ),
-                )
-            ],
-            key=uuid + "+竖线",
-            id={"type": "RND", "id": uuid},
-            size={"width": 2, "height": 200},
-            maxWidth=2,
-            position={"x": pageX, "y": pageY},
-            direction=["top", "bottom"],
-            bounds="parent",
-            selected=True,
-        )
-    elif data == "文本":
-        拖拽模块 = fuc.FefferyRND(
-            [
-                fac.AntdText("示例文本", strong=True, style=style(fontSize=14)),
-            ],
-            key=uuid + "+文本",
-            id={"type": "RND", "id": uuid},
-            size={"width": 60, "height": 26},
-            position={"x": pageX, "y": pageY},
-            direction=["top", "right", "bottom", "left"],
-            bounds="parent",
-            selected=True,
-            style=style(
-                # 左边框 黑色 虚线
-                border="1px dashed #000",
-            ),
-        )
-    elif data == "矩形":
-        拖拽模块 = fuc.FefferyRND(
-            [
-                html.Div(
-                    style=style(
-                        width="100%",
-                        height="100%",
-                        # 左边框 黑色
-                        border="2px solid #000",
-                    )
-                )
-            ],
-            key=uuid + "+矩形",
-            id={"type": "RND", "id": uuid},
-            size={"width": 200, "height": 200},
-            minHeight=20,
-            minWidth=20,
-            position={"x": pageX, "y": pageY},
-            bounds="parent",
-            selected=True,
-        )
-    elif data == "表格":
-        拖拽模块 = fuc.FefferyRND(
-            [
-                fac.AntdTable(
-                    columns=[
-                        {"title": "int型示例", "dataIndex": "int型示例"},
-                        {"title": "float型示例", "dataIndex": "float型示例"},
-                        {"title": "str型示例", "dataIndex": "str型示例"},
-                    ],
-                    data=[
-                        {
-                            "int型示例": 123,
-                            "float型示例": 1.23,
-                            "str型示例": "示例字符",
-                        }
-                    ],
-                    bordered=True,
-                    pagination=False,
-                    style=style(
-                        width="100%",
-                        height="100%",
-                    ),
-                )
-            ],
-            key=uuid + "+表格",
-            id={"type": "RND", "id": uuid},
-            size={"width": 500, "height": 100},
-            position={"x": 5, "y": pageY},
-            direction=[],  # 关闭尺寸调整功能
-            # dragAxis='y',
-            bounds="parent",
-            selected=True,
-        )
-    elif data == "二维码":
-        拖拽模块 = fuc.FefferyRND(
-            [
-                fuc.FefferyQRCode(
-                    value="FefferyQRCode示例",
-                    size=100,
-                )
-            ],
-            key=uuid + "+二维码",
-            id={"type": "RND", "id": uuid},
-            size={"width": 100, "height": 100},
-            minHeight=10,
-            minWidth=10,
-            position={"x": pageX, "y": pageY},
-            direction=[],  # 关闭尺寸调整功能
-            bounds="parent",
-            selected=True,
-        )
+    # """
+    # {
+    # "time": 1741185250633,
+    # "data": {},
+    # "pageX": 734,
+    # "pageY": 329,
+    # "clientX": 734,
+    # "clientY": 329,
+    # "screenX": 734,
+    # "screenY": 416
+    # }
+    # """
+    # pageX = dropEvent["pageX"] - 340
+    # pageY = dropEvent["pageY"] - 140
+    # data = dropEvent["data"]["info"]
 
-    return [拖拽模块] if children == None else [*children, 拖拽模块]
+    # uuid = str(uuid4())
+
+    # if data == "横线":
+    #     拖拽模块 = fuc.FefferyRND(
+    #         [
+    #             html.Div(
+    #                 key=uuid,
+    #                 style=style(
+    #                     width="100%",
+    #                     # 上边框 黑色
+    #                     borderTop="2px solid #000",
+    #                 ),
+    #             )
+    #         ],
+    #         key=uuid + "+横线",
+    #         id={"type": "RND", "id": uuid},
+    #         size={"width": 100, "height": 2},
+    #         maxHeight=2,
+    #         position={"x": pageX, "y": pageY},
+    #         direction=["right", "left"],
+    #         bounds="parent",
+    #         selected=True,
+    #     )
+    # elif data == "竖线":
+    #     拖拽模块 = fuc.FefferyRND(
+    #         [
+    #             html.Div(
+    #                 key=uuid,
+    #                 style=style(
+    #                     height="100%",
+    #                     # 左边框 黑色
+    #                     borderLeft="2px solid #000",
+    #                 ),
+    #             )
+    #         ],
+    #         key=uuid + "+竖线",
+    #         id={"type": "RND", "id": uuid},
+    #         size={"width": 2, "height": 200},
+    #         maxWidth=2,
+    #         position={"x": pageX, "y": pageY},
+    #         direction=["top", "bottom"],
+    #         bounds="parent",
+    #         selected=True,
+    #     )
+    # elif data == "文本":
+    #     拖拽模块 = fuc.FefferyRND(
+    #         [
+    #             fac.AntdText("示例文本", strong=True, style=style(fontSize=14)),
+    #         ],
+    #         key=uuid + "+文本",
+    #         id={"type": "RND", "id": uuid},
+    #         size={"width": 60, "height": 26},
+    #         position={"x": pageX, "y": pageY},
+    #         direction=["top", "right", "bottom", "left"],
+    #         bounds="parent",
+    #         selected=True,
+    #         style=style(
+    #             # 左边框 黑色 虚线
+    #             border="1px dashed #000",
+    #         ),
+    #     )
+    # elif data == "矩形":
+    #     拖拽模块 = fuc.FefferyRND(
+    #         [
+    #             html.Div(
+    #                 style=style(
+    #                     width="100%",
+    #                     height="100%",
+    #                     # 左边框 黑色
+    #                     # border="2px solid #000",
+    #                     border="2px solid rgba(0, 123, 255, 1)",  # 内部边框
+    #                 )
+    #             )
+    #         ],
+    #         key=uuid + "+矩形",
+    #         id={"type": "RND", "id": uuid},
+    #         size={"width": 200, "height": 200},
+    #         minHeight=20,
+    #         minWidth=20,
+    #         position={"x": pageX, "y": pageY},
+    #         bounds="parent",
+    #         # selected=False,
+    #         selectedStyle={
+    #             "boxShadow": "0 0 8px rgba(0, 123, 255, 0.6)",  # 外部阴影
+    #             "border": "2px solid rgba(0, 123, 255, 0.8)",  # 外部边框
+    #             "opacity": 0.9,  # 选中时的透明度
+    #         },
+    #     )
+    # elif data == "表格":
+    #     拖拽模块 = fuc.FefferyRND(
+    #         [
+    #             fac.AntdTable(
+    #                 columns=[
+    #                     {"title": "int型示例", "dataIndex": "int型示例"},
+    #                     {"title": "float型示例", "dataIndex": "float型示例"},
+    #                     {"title": "str型示例", "dataIndex": "str型示例"},
+    #                 ],
+    #                 data=[
+    #                     {
+    #                         "int型示例": 123,
+    #                         "float型示例": 1.23,
+    #                         "str型示例": "示例字符",
+    #                     }
+    #                 ],
+    #                 bordered=True,
+    #                 pagination=False,
+    #                 style=style(
+    #                     width="100%",
+    #                     height="100%",
+    #                 ),
+    #             )
+    #         ],
+    #         key=uuid + "+表格",
+    #         id={"type": "RND", "id": uuid},
+    #         size={"width": 500, "height": 100},
+    #         position={"x": 5, "y": pageY},
+    #         direction=[],  # 关闭尺寸调整功能
+    #         # dragAxis='y',
+    #         bounds="parent",
+    #         selected=True,
+    #     )
+    # elif data == "二维码":
+    #     拖拽模块 = fuc.FefferyRND(
+    #         [
+    #             fuc.FefferyQRCode(
+    #                 value="FefferyQRCode示例",
+    #                 size=100,
+    #             )
+    #         ],
+    #         key=uuid + "+二维码",
+    #         id={"type": "RND", "id": uuid},
+    #         size={"width": 100, "height": 100},
+    #         minHeight=10,
+    #         minWidth=10,
+    #         position={"x": pageX, "y": pageY},
+    #         direction=[],  # 关闭尺寸调整功能
+    #         bounds="parent",
+    #         selected=True,
+    #     )
+
+    # return [拖拽模块] if children == None else [*children, 拖拽模块]
 
 
 # 更新回调中的表单生成逻辑
@@ -643,28 +653,18 @@ def load_components_from_db(n_clicks, template_name, json_data_str):
         # - 返回空列表，清空目标容器内容
         if not components:
             return []
-        # 存储渲染后的组件
-        rendered_components = []
-        # 遍历查询结果
-        # - 对每个组件调用 render_component 函数进行渲染
-        for component in components:
-            rendered_comp = render_component(
-                component.component_id,  # 组件的唯一标识符
-                component.layout_data,  # 组件的布局数据（JSON 格式）
-                False,  # 新增：禁用拖拽功能
-                json_data,  # 新增：传递 JSON 数据
+        rendered_components = [
+            render_component(
+                comp.component_id,
+                comp.layout_data,
+                disableDragging=False,
+                json_data=json_data,
             )
-            # 如果渲染成功，则添加到列表中
-            if rendered_comp:
-                rendered_components.append(rendered_comp)
-
-        # 返回渲染后的组件列表
-        # - 将所有组件渲染到 listen-drop-target 容器中
+            for comp in components
+            if render_component(comp.component_id, comp.layout_data)
+        ]
         return rendered_components
     except Exception as e:
-        # 捕获可能的异常（如数据库连接失败）
-        # - 打印错误信息，便于调试
-        # - 返回 dash.no_update，避免界面出错
         logger.debug(f"加载组件失败: {str(e)}")
         return dash.no_update
 

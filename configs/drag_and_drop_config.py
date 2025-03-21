@@ -3,163 +3,189 @@ from dash import html
 import feffery_utils_components as fuc
 import feffery_antd_components as fac
 from feffery_dash_utils.style_utils import style
+from dash import set_props
 
 
-# 组件渲染函数（复用逻辑）
-def render_component(component_id, layout_data, disableDragging=False, json_data=None):
+# 组件渲染函数（统一处理拖拽创建和数据库加载）
+def render_component(
+    component_id,
+    layout_data=None,
+    drop_data=None,
+    disableDragging=False,
+    json_data=None,
+):
     """
-    根据数据库中的 layout_data 和可选的 JSON 数据渲染组件。
+    统一渲染组件，支持从数据库加载或拖拽创建。
 
     参数:
-        component_id (str): 组件的唯一标识符
-        layout_data (dict): 从数据库中获取的组件布局数据，包含位置、大小、类型等
-        json_data (dict, optional): 外部传入的 JSON 数据，用于动态填充组件内容
-
-    返回:
-        FefferyRND: 渲染后的拖拽组件对象，或 None（如果类型不支持）
+        component_id (str): 组件ID
+        layout_data (dict): 从数据库加载的布局数据 (可选)
+        drop_data (dict): 从拖拽事件传入的数据 (可选)
+        disableDragging (bool): 是否禁用拖拽
+        json_data (dict): 动态JSON数据 (可选)
     """
-    # 提取布局数据中的基本属性
-    position = layout_data["position"]
-    size = layout_data["size"]
-    comp_type = layout_data["type"]
-    extra = layout_data.get("extra", {}).copy()  # 复制 extra，避免修改原始数据
+    if layout_data:
+        position = layout_data["position"]
+        size = layout_data["size"]
+        comp_type = layout_data["type"]
+        extra = layout_data.get("extra", {}).copy()
+    elif drop_data:
+        position = {"x": drop_data["pageX"] - 340, "y": drop_data["pageY"] - 140}
+        comp_type = drop_data["data"]["info"]
+        size = None
+        extra = {}
+    else:
+        return None
 
-    # 如果提供了 JSON 数据，更新 extra 中的内容
-    if json_data:
-        if comp_type == "text":
-            # print(extra.get("ddata_type", ""))
-
-            if extra.get("ddata_type", "") != "静态数据":
-                # 文本组件：使用 content_key 映射 JSON 数据，fallback 到默认 content
-                content_key = extra.get("content_key", extra.get("content", ""))
-                extra["content"] = json_data.get(content_key, extra.get("content", ""))
+    # 处理JSON动态数据
+    if json_data and comp_type in ["text", "table", "qrcode"]:
+        if comp_type == "text" and extra.get("data_type", "静态数据") != "静态数据":
+            content_key = extra.get("content_key", extra.get("content", ""))
+            extra["content"] = json_data.get(content_key, extra.get("content", ""))
         elif comp_type == "table":
-            # 表格组件：使用 JSON 数据中的 items 或其他指定键覆盖默认数据
             data_key = extra.get("data_key", "items")
             extra["data"] = json_data.get(data_key, extra.get("data", []))
-        elif comp_type == "qrcode":
-            if extra.get("ddata_type", "") != "静态数据":
-                # 二维码组件：使用 JSON 数据中的 qrcode_url 或指定键覆盖默认值
-                value_key = extra.get("value_key", "qrcode_url")
-                extra["value"] = json_data.get(value_key, extra.get("value", ""))
+        elif comp_type == "qrcode" and extra.get("data_type", "静态数据") != "静态数据":
+            value_key = extra.get("value_key", "qrcode_url")
+            extra["value"] = json_data.get(value_key, extra.get("value", ""))
 
-    # 根据组件类型渲染
-    if comp_type == "horizontal_line":
+    # 通用组件配置（移除direction）
+    base_config = {
+        "id": {"type": "RND", "id": component_id},
+        "position": position,
+        "disableDragging": disableDragging,
+        "bounds": "parent",
+        "selected": False if layout_data else True,  # 拖拽时默认选中
+    }
+
+    # 类型特定配置
+    if comp_type == "横线":
+        size = size or {"width": 100, "height": 2}
         return fuc.FefferyRND(
-            [html.Div(style={"width": "100%", "borderTop": "2px solid #000"})],
+            [html.Div(style=style(width="100%", borderTop="2px solid #000"))],
             key=f"{component_id}+横线",
-            id={"type": "RND", "id": component_id},
             size=size,
             maxHeight=2,
-            position=position,
-            disableDragging=disableDragging,
-            direction=["right", "left"] if disableDragging == False else [],
-            bounds="parent",
-            selected=False,
+            direction=["right", "left"] if not disableDragging else [],
+            **base_config,
         )
-    elif comp_type == "vertical_line":
+    elif comp_type == "竖线":
+        size = size or {"width": 2, "height": 200}
         return fuc.FefferyRND(
-            [html.Div(style={"height": "100%", "borderLeft": "2px solid #000"})],
+            [html.Div(style=style(height="100%", borderLeft="2px solid #000"))],
             key=f"{component_id}+竖线",
-            id={"type": "RND", "id": component_id},
             size=size,
             maxWidth=2,
-            position=position,
-            disableDragging=disableDragging,
-            direction=["top", "bottom"] if disableDragging == False else [],
-            bounds="parent",
-            selected=False,
+            direction=["top", "bottom"] if not disableDragging else [],
+            **base_config,
         )
-    elif comp_type == "text":
+    elif comp_type in ["文本", "text"]:
+        size = size or {"width": 60, "height": 26}
+        extra.setdefault("content", "示例文本")
+        extra.setdefault("fontSize", 14)
         return fuc.FefferyRND(
             [
                 fac.AntdText(
-                    extra["content"],  # 使用更新后的 content
+                    extra["content"],
                     strong=True,
-                    style={"fontSize": extra["fontSize"]},
+                    style=style(fontSize=extra["fontSize"]),
                 )
             ],
             key=f"{component_id}+文本",
-            id={"type": "RND", "id": component_id},
             size=size,
-            position=position,
-            disableDragging=disableDragging,
-            direction=["top", "right", "bottom", "left"]
-            if disableDragging == False
-            else [],
-            bounds="parent",
-            selected=False,
-            style=style(
-                # 左边框 黑色 虚线
-                border="1px dashed #000",
-            )
-            if disableDragging == False
-            else {},
+            style=style(border="1px dashed #000") if not disableDragging else {},
+            direction=["top", "right", "bottom", "left"] if not disableDragging else [],
+            **base_config,
         )
-    elif comp_type == "rectangle":
+    elif comp_type in ["矩形", "rectangle"]:
+        size = size or {"width": 200, "height": 200}
         return fuc.FefferyRND(
             [
                 html.Div(
-                    style={
-                        "width": "100%",
-                        "height": "100%",
-                        "border": "2px solid #000",
-                    }
+                    style=style(
+                        width="100%",
+                        height="100%",
+                        border="2px solid rgba(0, 123, 255, 1)",
+                    )
                 )
             ],
             key=f"{component_id}+矩形",
-            id={"type": "RND", "id": component_id},
             size=size,
             minHeight=20,
             minWidth=20,
-            position=position,
-            disableDragging=disableDragging,
-            direction=["top", "right", "bottom", "left"]
-            if disableDragging == False
-            else [],
-            bounds="parent",
-            selected=False,
+            direction=["top", "right", "bottom", "left"] if not disableDragging else [],
+            **base_config,
         )
-    elif comp_type == "table":
+    elif comp_type in ["表格", "table"]:
+        size = size or {"width": 500, "height": 100}
+        extra.setdefault(
+            "columns",
+            [
+                {"title": "int型示例", "dataIndex": "int型示例"},
+                {"title": "float型示例", "dataIndex": "float型示例"},
+                {"title": "str型示例", "dataIndex": "str型示例"},
+            ],
+        )
+        extra.setdefault(
+            "data", [{"int型示例": 123, "float型示例": 1.23, "str型示例": "示例字符"}]
+        )
         return fuc.FefferyRND(
             [
                 fac.AntdTable(
                     columns=extra["columns"],
-                    data=extra["data"],  # 使用更新后的 data
+                    data=extra["data"],
                     bordered=True,
                     pagination=False,
-                    style={"width": "100%", "height": "100%"},
+                    style=style(width="100%", height="100%"),
                 )
             ],
             key=f"{component_id}+表格",
-            id={"type": "RND", "id": component_id},
             size=size,
-            position=position,
-            disableDragging=disableDragging,
-            direction=[],
-            bounds="parent",
-            selected=False,
+            direction=[],  # 表格默认不可调整大小
+            **base_config,
         )
-    elif comp_type == "qrcode":
+    elif comp_type in ["二维码", "qrcode"]:
+        size = size or {"width": 100, "height": 100}
+        extra.setdefault("value", "FefferyQRCode示例")
+        extra.setdefault("size", 100)
         return fuc.FefferyRND(
-            [
-                fuc.FefferyQRCode(
-                    value=extra["value"],  # 使用更新后的 value
-                    size=extra["size"],
-                )
-            ],
+            [fuc.FefferyQRCode(value=extra["value"], size=extra["size"])],
             key=f"{component_id}+二维码",
-            id={"type": "RND", "id": component_id},
             size=size,
             minHeight=10,
             minWidth=10,
-            position=position,
-            disableDragging=disableDragging,
-            direction=[],
-            bounds="parent",
-            selected=False,
+            direction=[],  # 二维码默认不可调整大小
+            **base_config,
         )
     return None
+
+
+# 组件更新函数
+def update_component(component_id, layout_data):
+    """更新组件的属性并应用到UI"""
+    comp_type = layout_data["type"]
+    props = {"position": layout_data["position"], "size": layout_data["size"]}
+
+    if comp_type in ["文本", "text"]:
+        props["children"] = fac.AntdText(
+            layout_data["extra"]["content"],
+            strong=True,
+            style=style(fontSize=layout_data["extra"]["fontSize"]),
+        )
+    elif comp_type in ["二维码", "qrcode"]:
+        props["children"] = fuc.FefferyQRCode(
+            value=layout_data["extra"]["value"], size=layout_data["extra"]["size"]
+        )
+    elif comp_type in ["表格", "table"]:
+        props["children"] = fac.AntdTable(
+            columns=layout_data["extra"]["columns"],
+            data=layout_data["extra"]["data"],
+            bordered=True,
+            pagination=False,
+            style=style(width="100%", height="100%"),
+        )
+
+    set_props({"type": "RND", "id": component_id}, props)
 
 
 # 定义组件表单配置
