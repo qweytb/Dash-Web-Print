@@ -105,7 +105,7 @@ def render_component(
                     style=style(
                         width="100%",
                         height="100%",
-                        border="2px solid rgba(0, 123, 255, 1)",
+                        border="2px solid rgba(0, 0, 0, 1)",
                     )
                 )
             ],
