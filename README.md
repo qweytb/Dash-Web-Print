@@ -26,6 +26,7 @@
 
 ### 打印选项
 - **静默打印：** 通过 WebSocket 服务器直接打印布局，无需用户交互。
+- **WebSocket 打印：** 通过 WebSocket 服务器实时打印布局，无需用户交互。推荐工具：webapp-hardware-bridge，地址：https://github.com/qweytb/Dash-Web-Print/tree/maste
 - **弹窗打印：** 在弹窗中生成预览以供手动打印。
 - **PDF 导出：** 将布局转换为 PDF 格式（基于 base64 编码）。
 - **打印机选择：** 通过 HTTP API 获取并选择可用打印机。
