@@ -6,7 +6,7 @@ from flask_login import LoginManager, UserMixin
 
 from configs import ip_config, BaseConfig
 
-VERSION = "0.1.0"  # 定义版本号
+VERSION = "0.1.1"  # 定义版本号
 
 app = dash.Dash(
     __name__,
