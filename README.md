@@ -15,6 +15,14 @@
 
 ---
 
+## 新功能预览
+
+------
+
+- [ ] python重写，静默打印客户端，ws协议改成http请求，结合浏览器请求客户端机器的http打印端，无需经过服务器
+- [ ] 新增，表格打印，实现功能类似于产品列表小票打印
+- [ ] 新增，无web页面显示，实现静默打印（该功能无头绪）无限期待定
+
 ## 功能介绍
 
 ### 核心功能
@@ -38,7 +46,7 @@
 
 ### 技术亮点
 - 使用 Dash 和 Flask 实现响应式、服务器驱动的 UI。
-- 通过 SQLAlchemy 处理数据库交互（基于 `Session` 使用推测为后端 ORM）。
+- 通过 SQLAlchemy 处理数据库交互
 - 支持 WebSocket 实现实时打印机通信。
 - 模块化设计，组件和回调可重用。
 
@@ -78,17 +86,18 @@ layout-assistant/
    - 实现 IP 过滤和浏览器兼容性检查。
 
    **主要代码：**
+   
    ```python
    from flask import request, abort
    from dash import Dash
    from flask_login import LoginManager
-
+   
    app = Dash(__name__, title=f"布局助手{VERSION}", suppress_callback_exceptions=True)
    server = app.server
    server.secret_key = "ytb_147258369"
    login_manager = LoginManager()
    login_manager.init_app(server)
-
+   
    @server.before_request
    def validate_ip_range():
        client_ip = request.remote_addr
@@ -97,7 +106,7 @@ layout-assistant/
        if ip_config.ENABLE_IP_WHITELIST and not ip_config.is_ip_in_list(client_ip, ip_config.WHITE_IP_LIST):
            abort(403, description="禁止：您的IP地址是不允许的。")
    ```
-
+   
 2. **路由 (`router_root.py`)：**
    - 处理根路径 (`/`) 和打印预览 (`/print_preview`) 的 URL 路由。
 
@@ -107,7 +116,7 @@ layout-assistant/
    from server import app
    from views.drag_and_drop import DragAndDrop
    from views.print_preview import PrintPreview
-
+   
    @app.callback(
        Output("root-container", "children"),
        [Input("root-url", "href"), Input("root-url", "pathname")]
@@ -131,7 +140,7 @@ layout-assistant/
    from dash import html
    import feffery_antd_components as fac
    import feffery_utils_components as fuc
-
+   
    def DragAndDrop():
        return fac.AntdFlex(
            [
@@ -203,8 +212,8 @@ pip install dash flask flask-login feffery_antd_components feffery_utils_compone
 ### 安装步骤
 1. **克隆仓库：**
    ```bash
-   git clone https://github.com/yourusername/layout-assistant.git
-   cd layout-assistant
+   git clone https://gitee.com/yang-tianbao95/dash-web-print.git
+   cd dash-web-print
    ```
 
 2. **配置数据库：**
@@ -265,9 +274,9 @@ pip install dash flask flask-login feffery_antd_components feffery_utils_compone
 
 1. **Fork 仓库：**
    - 在 GitHub 上 Fork 并本地克隆。
-   https://github.com/qweytb/Dash-Web-Print/tree/0.1.2
+   https://github.com/qweytb/Dash-Web-Print
    - 在 gitee 上 Fork 并本地克隆。
-   https://gitee.com/yang-tianbao95/dash-web-print/tree/0.1.2/
+   https://gitee.com/yang-tianbao95/dash-web-print
 
 2. **搭建开发环境：**
    - 按照安装指南操作。
