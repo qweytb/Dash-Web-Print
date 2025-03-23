@@ -53,7 +53,8 @@ def DragAndDrop():
                         fac.Fragment(
                             [
                                 fuc.FefferyListenDrag(
-                                    targetSelector=f"#drag-target-{i if i != '表格' else None}",
+                                    # targetSelector=f"#drag-target-{i if i != '表格' else None}",
+                                    targetSelector=f"#drag-target-{i}",
                                     data={"info": f"{i}"},
                                 )
                                 for i in [
@@ -74,9 +75,8 @@ def DragAndDrop():
                                         id=f"drag-target-{i}",
                                         style=style(
                                             height=80,
-                                            background="#91d5ff"
-                                            if i != "表格"
-                                            else "grey",
+                                            # background="#91d5ff" if i != "表格" else "grey",
+                                            background="#91d5ff",
                                             cursor="move",
                                             fontSize=20,
                                             color="white",

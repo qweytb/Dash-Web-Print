@@ -308,6 +308,7 @@ COMPONENT_CONFIGS = {
         "fields": [
             {"name": "组件ID", "component": "AntdInput", "label": "组件ID"},
             {"name": "坐标", "component": "PositionInputs", "label": "坐标"},
+            {"name": "宽高", "component": "SizeInputs", "label": "宽高", "span": 24},
             {
                 "name": "添加表格字段",
                 "component": "AntdButton",
@@ -329,6 +330,8 @@ COMPONENT_CONFIGS = {
             "组件ID": data["id"],
             "X": data["坐标"]["x"],
             "Y": data["坐标"]["y"],
+            "W": data["大小"]["width"],
+            "H": data["大小"]["height"],
         },
     },
     "二维码": {
@@ -380,6 +383,8 @@ COMPONENT_CONFIGS = {
 def create_form_item(
     config: Dict[str, Any], data: Dict[str, Any], is_button_row: bool = False
 ):
+    print(data)
+
     component_map = {
         "AntdInput": fac.AntdInput,
         "AntdInputNumber": fac.AntdInputNumber,
@@ -448,7 +453,7 @@ def create_form_item(
                         {
                             "名称": "字段名称",
                             "绑定": "绑定字段",
-                            "宽度": "宽度",
+                            "宽度": "20%",
                             "操作": [
                                 {
                                     "content": "删除",

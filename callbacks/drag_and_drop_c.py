@@ -195,7 +195,7 @@ def listen_drop_event(dropEvent, children):
     # return [拖拽模块] if children == None else [*children, 拖拽模块]
 
 
-# 更新回调中的表单生成逻辑
+# 表单生成
 @app.callback(
     Output("component-edit-container", "children"),
     Input({"type": "RND", "id": ALL}, "position"),
@@ -265,7 +265,7 @@ def component_edit_container(position, size, selected, key):
         # 检查是否已存在相同 component_id 的记录
         existing = session.query(ComponentLayout).filter_by(component_id=id).first()
         if existing:
-            logger.debug(f"组件数据替换成功: {existing.layout_data}")
+            # logger.debug(f"组件数据替换成功: {existing.layout_data}")
             comp_type = existing.layout_data.get("type")
             # default_values["X"] = existing.layout_data["position"]["x"]
             # default_values["Y"] = existing.layout_data["position"]["y"]
@@ -284,6 +284,7 @@ def component_edit_container(position, size, selected, key):
                 # default_values["W"] = existing.layout_data["size"]["width"]
                 # default_values["W"] = existing.layout_data["size"]["height"]
             elif comp_type == "table":
+                # {"position": {"x": 272, "y": 231}, "size": {}, "type": "table", "extra": {"columns": [{"title": "字段名称", "dataIndex": "name", "width": "20%"}], "data": [{"name": "name"}]}}
                 # default_values['X'] = existing.layout_data.get("X")
                 # default_values['Y'] = existing.layout_data.get("Y")
                 pass
@@ -454,20 +455,16 @@ def RND_Button_Confirm(nClicks, values, table_data, load_template_input):
             },
         )
     elif table_data:  # 表格
+        # logger.debug(f"表格数据：{table_data}")
+
         layout_data["type"] = "table"
+        layout_data["size"] = {"width": values[0]["W"], "height": values[0]["H"]}
         layout_data["extra"] = {
             "columns": [
-                {"title": "int型示例", "dataIndex": "int型示例"},
-                {"title": "float型示例", "dataIndex": "float型示例"},
-                {"title": "str型示例", "dataIndex": "str型示例"},
+                {"title": i["名称"], "dataIndex": i["绑定"], "width": i["宽度"]}
+                for i in table_data[0]
             ],
-            "data": [
-                {
-                    "int型示例": 123,
-                    "float型示例": 1.23,
-                    "str型示例": "示例字符",
-                }
-            ],
+            "data": [{f"{i['绑定']}": f"{i['绑定']}" for i in table_data[0]}],
         }
         set_props(
             {"type": "RND", "id": id},
@@ -475,17 +472,10 @@ def RND_Button_Confirm(nClicks, values, table_data, load_template_input):
                 "position": {"x": values[0]["X"], "y": values[0]["Y"]},
                 "children": fac.AntdTable(
                     columns=[
-                        {"title": "int型示例", "dataIndex": "int型示例"},
-                        {"title": "float型示例", "dataIndex": "float型示例"},
-                        {"title": "str型示例", "dataIndex": "str型示例"},
+                        {"title": i["名称"], "dataIndex": i["绑定"], "width": i["宽度"]}
+                        for i in table_data[0]
                     ],
-                    data=[
-                        {
-                            "int型示例": 123,
-                            "float型示例": 1.23,
-                            "str型示例": "示例字符",
-                        }
-                    ],
+                    data=[{f"{i['绑定']}": f"{i['绑定']}" for i in table_data[0]}],
                     bordered=True,
                     pagination=False,
                     style=style(

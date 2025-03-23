@@ -39,6 +39,10 @@ def PrintPreview(href):
         json_data = {
             "order_number": "INV-001",
             "customer_name": "张三",
+            "items": [
+                {"name": "商品A", "quantity": 2, "price": 50.00},
+                {"name": "商品B", "quantity": 1, "price": 100.00},
+            ],
             "qrcode_url": "https://example.com/invoice/INV-001",
         }
 

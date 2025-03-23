@@ -20,7 +20,8 @@
 ------
 
 - [ ] python重写，静默打印客户端，ws协议改成http请求，结合浏览器请求客户端机器的http打印端，无需经过服务器
-- [ ] 新增，表格打印，实现功能类似于产品列表小票打印
+- [ ] 新增，表格组件打印
+- [ ] 新增，无固定长度打印。
 - [ ] 新增，无web页面显示，实现静默打印（该功能无头绪）无限期待定
 
 ## 功能介绍
@@ -277,12 +278,31 @@ pip install dash flask flask-login feffery_antd_components feffery_utils_compone
    https://github.com/qweytb/Dash-Web-Print
    - 在 gitee 上 Fork 并本地克隆。
    https://gitee.com/yang-tianbao95/dash-web-print
-
 2. **搭建开发环境：**
    - 按照安装指南操作。
 
----
-**创建环境**
+------
+
+# 项目展示
+
+![](01.png)
+
+
+
+![](02.png)
+
+![03](03.png)
+
+![04](04.png)
+
+![](05.webp)
+
+<video src="demo.mp4" controls>视频</video>
+
+# 创建环境
+
+
+
 命令根据 environment.yml 文件创建新环境：
 
 mamba env create -f environment.yml
