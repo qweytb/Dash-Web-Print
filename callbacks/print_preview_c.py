@@ -16,7 +16,7 @@ from utils.ba64_pdf import base64_to_pdf_base64
 @app.callback(
     Output("print-target", "targetSelector"),
     Input("print-target-trigger", "nClicks"),
-    prevent_initial_call=True,
+    prevent_initial_call=True,  # 注释掉实现自动打印
 )
 def get_print_target(静默):
     return "#print-preview-container"
@@ -125,7 +125,7 @@ def get_ws_message(latestMessage):
 @app.callback(
     Output("print-target-window", "targetSelector"),
     Input("print-popup-window", "nClicks"),
-    prevent_initial_call=True,
+    prevent_initial_call=True,  # 注释掉实现自动打印
 )
 def get_print_target_2(nClicks):
     return "#print-preview-container"

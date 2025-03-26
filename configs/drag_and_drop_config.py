@@ -381,9 +381,23 @@ COMPONENT_CONFIGS = {
 
 # 辅助函数：创建表单项
 def create_form_item(
-    config: Dict[str, Any], data: Dict[str, Any], is_button_row: bool = False
+    config: Dict[str, Any],
+    data: Dict[str, Any],
+    table_data: list[str, Any],
+    is_button_row: bool = False,
 ):
-    print(data)
+    """
+    根据给定的配置和数据创建一个表单项。
+
+    参数:
+    config (Dict[str, Any]): 表单项的配置信息，通常包含字段类型、标签、默认值等。
+    data (Dict[str, Any]): 表单数据，用于填充表单项的当前值。
+    table_data (list[str, Any]): 表格数据，通常用于下拉列表或选择框等需要选项的表单项。
+    is_button_row (bool, optional): 标识当前表单项是否为按钮行，默认为False。
+
+    返回值:
+    该函数通常用于生成并渲染表单项到UI中。
+    """
 
     component_map = {
         "AntdInput": fac.AntdInput,
@@ -451,9 +465,9 @@ def create_form_item(
                     ],
                     data=[
                         {
-                            "名称": "字段名称",
-                            "绑定": "绑定字段",
-                            "宽度": "20%",
+                            "名称": i["title"],
+                            "绑定": i["dataIndex"],
+                            "宽度": i["width"],
                             "操作": [
                                 {
                                     "content": "删除",
@@ -463,6 +477,7 @@ def create_form_item(
                                 }
                             ],
                         }
+                        for i in table_data
                     ],
                     bordered=True,
                     pagination=False,

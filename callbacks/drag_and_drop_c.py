@@ -232,32 +232,11 @@ def component_edit_container(position, size, selected, key):
     if not config:
         return dash.no_update
 
-    form_items = [create_form_item(field, data) for field in config["fields"]]
-    form_items.append(
-        fac.AntdCol(
-            fac.AntdFlex(
-                [
-                    fac.AntdButton(
-                        "确认",
-                        id={"type": "RND_Button_Confirm", "id": data["id"]},
-                        type="primary",
-                        style=style(width="50%"),
-                    ),
-                    fac.AntdButton(
-                        "取消",
-                        id={"type": "RND_Button_Cancel", "id": data["id"]},
-                        type="primary",
-                        style=style(width="50%"),
-                    ),
-                ],
-                gap=10,
-            ),
-            span=24,
-        )
-    )
-
     default_values = config["default_values"](data)
     id = default_values["组件ID"]  # 提取组件ID
+
+    table_data = []
+
     # 保存到数据库
     try:
         # 创建数据库会话
@@ -285,9 +264,11 @@ def component_edit_container(position, size, selected, key):
                 # default_values["W"] = existing.layout_data["size"]["height"]
             elif comp_type == "table":
                 # {"position": {"x": 272, "y": 231}, "size": {}, "type": "table", "extra": {"columns": [{"title": "字段名称", "dataIndex": "name", "width": "20%"}], "data": [{"name": "name"}]}}
-                # default_values['X'] = existing.layout_data.get("X")
-                # default_values['Y'] = existing.layout_data.get("Y")
-                pass
+
+                # print(existing.layout_data["extra"]["columns"])
+
+                table_data = existing.layout_data["extra"]["columns"]
+
             elif comp_type == "qrcode":
                 default_values["数据类型"] = existing.layout_data["extra"]["data_type"]
                 default_values["大小"] = existing.layout_data["extra"]["size"]
@@ -302,6 +283,32 @@ def component_edit_container(position, size, selected, key):
     finally:
         # 关闭数据库会话，释放资源
         session.close()
+
+    form_items = [
+        create_form_item(field, data, table_data) for field in config["fields"]
+    ]
+    form_items.append(
+        fac.AntdCol(
+            fac.AntdFlex(
+                [
+                    fac.AntdButton(
+                        "确认",
+                        id={"type": "RND_Button_Confirm", "id": data["id"]},
+                        type="primary",
+                        style=style(width="50%"),
+                    ),
+                    fac.AntdButton(
+                        "取消",
+                        id={"type": "RND_Button_Cancel", "id": data["id"]},
+                        type="primary",
+                        style=style(width="50%"),
+                    ),
+                ],
+                gap=10,
+            ),
+            span=24,
+        )
+    )
 
     return fac.AntdForm(
         fac.AntdRow(form_items, gutter=10),
