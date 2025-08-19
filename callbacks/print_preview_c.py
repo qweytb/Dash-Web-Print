@@ -46,20 +46,6 @@ def on_screenshot_result(screenshot_result, value):
     )
 
 
-# @app.callback(
-#     Input("http-requests", "responseResult"),
-#     prevent_initial_call=True,
-# )
-# def grt_http(responseResult):
-#     print(responseResult)
-#     if responseResult.get("status") == 200:
-#         data = responseResult.get("data")
-#         set_props(
-#             "global-redirect",
-#             {"children": fac.AntdMessage(content=f"返回的内容：{data}", type="info")},
-#         )
-
-
 # 获取打印机列表
 @app.callback(
     Output("http-requests", "requestConfig", allow_duplicate=True),
@@ -138,6 +124,8 @@ def get_print_target_2(nClicks):
 )
 def execute_js_demo_2(screenshotResult):
     data = screenshotResult.get("dataUrl")  # .split("base64,")[-1]
+
+    # print(data)
 
     # 创建包含 base64 图像的 HTML 内容
     html_content = f"""

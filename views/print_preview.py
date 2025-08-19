@@ -103,6 +103,17 @@ def PrintPreview(href):
                         id="websocket-print",
                         socketUrl="ws://127.0.0.1:12212/printer",
                     ),
+                    # 元素转图片
+                    fuc.FefferyDom2Image(id="print-target"),
+                    fuc.FefferyDiv(
+                        id="print-preview-container",
+                        children=rendered_components,
+                        shadow="always-shadow-light",
+                        style=style(
+                            width=f"{paper.width_mm}mm",
+                            height=f"{paper.height_mm}mm",
+                        ),
+                    ),
                     fac.AntdSpace(
                         [
                             fuc.FefferyExecuteJs(id="print-js-window"),
@@ -143,17 +154,6 @@ def PrintPreview(href):
                                 ]
                             ),
                         ]
-                    ),
-                    # 元素转图片
-                    fuc.FefferyDom2Image(id="print-target"),
-                    fuc.FefferyDiv(
-                        id="print-preview-container",
-                        children=rendered_components,
-                        shadow="always-shadow-light",
-                        style=style(
-                            width=f"{paper.width_mm}mm",
-                            height=f"{paper.height_mm}mm",
-                        ),
                     ),
                 ],
                 direction="vertical",

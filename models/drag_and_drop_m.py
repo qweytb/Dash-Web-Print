@@ -46,9 +46,9 @@ class PaperSize(Base):
 
     id = Column(Integer, primary_key=True)
     # 模板名称，字符串类型，最长 100 个字符，可为空
-    template_name = Column(String(100))
+    template_name = Column(String(100), unique=True)
     # 纸张类型名称，例如 "A4", "A3", "Custom"
-    type_name = Column(String(50), nullable=False, unique=True)
+    type_name = Column(String(50), nullable=False)
     # 宽度（毫米），整数类型
     width_mm = Column(Integer, nullable=False)
     # 高度（毫米），整数类型

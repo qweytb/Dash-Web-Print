@@ -59,7 +59,7 @@ def render_component(
     }
 
     # 类型特定配置
-    if comp_type == "横线":
+    if comp_type in ["横线", "horizontal_line"]:
         size = size or {"width": 100, "height": 2}
         return fuc.FefferyRND(
             [html.Div(style=style(width="100%", borderTop="2px solid #000"))],
@@ -69,7 +69,7 @@ def render_component(
             direction=["right", "left"] if not disableDragging else [],
             **base_config,
         )
-    elif comp_type == "竖线":
+    elif comp_type in ["竖线", "vertical_line"]:
         size = size or {"width": 2, "height": 200}
         return fuc.FefferyRND(
             [html.Div(style=style(height="100%", borderLeft="2px solid #000"))],

@@ -36,164 +36,6 @@ def listen_drop_event(dropEvent, children):
     component = render_component(uuid, drop_data=dropEvent, disableDragging=False)
     return [component] if children is None else [*children, component]
 
-    # """
-    # {
-    # "time": 1741185250633,
-    # "data": {},
-    # "pageX": 734,
-    # "pageY": 329,
-    # "clientX": 734,
-    # "clientY": 329,
-    # "screenX": 734,
-    # "screenY": 416
-    # }
-    # """
-    # pageX = dropEvent["pageX"] - 340
-    # pageY = dropEvent["pageY"] - 140
-    # data = dropEvent["data"]["info"]
-
-    # uuid = str(uuid4())
-
-    # if data == "横线":
-    #     拖拽模块 = fuc.FefferyRND(
-    #         [
-    #             html.Div(
-    #                 key=uuid,
-    #                 style=style(
-    #                     width="100%",
-    #                     # 上边框 黑色
-    #                     borderTop="2px solid #000",
-    #                 ),
-    #             )
-    #         ],
-    #         key=uuid + "+横线",
-    #         id={"type": "RND", "id": uuid},
-    #         size={"width": 100, "height": 2},
-    #         maxHeight=2,
-    #         position={"x": pageX, "y": pageY},
-    #         direction=["right", "left"],
-    #         bounds="parent",
-    #         selected=True,
-    #     )
-    # elif data == "竖线":
-    #     拖拽模块 = fuc.FefferyRND(
-    #         [
-    #             html.Div(
-    #                 key=uuid,
-    #                 style=style(
-    #                     height="100%",
-    #                     # 左边框 黑色
-    #                     borderLeft="2px solid #000",
-    #                 ),
-    #             )
-    #         ],
-    #         key=uuid + "+竖线",
-    #         id={"type": "RND", "id": uuid},
-    #         size={"width": 2, "height": 200},
-    #         maxWidth=2,
-    #         position={"x": pageX, "y": pageY},
-    #         direction=["top", "bottom"],
-    #         bounds="parent",
-    #         selected=True,
-    #     )
-    # elif data == "文本":
-    #     拖拽模块 = fuc.FefferyRND(
-    #         [
-    #             fac.AntdText("示例文本", strong=True, style=style(fontSize=14)),
-    #         ],
-    #         key=uuid + "+文本",
-    #         id={"type": "RND", "id": uuid},
-    #         size={"width": 60, "height": 26},
-    #         position={"x": pageX, "y": pageY},
-    #         direction=["top", "right", "bottom", "left"],
-    #         bounds="parent",
-    #         selected=True,
-    #         style=style(
-    #             # 左边框 黑色 虚线
-    #             border="1px dashed #000",
-    #         ),
-    #     )
-    # elif data == "矩形":
-    #     拖拽模块 = fuc.FefferyRND(
-    #         [
-    #             html.Div(
-    #                 style=style(
-    #                     width="100%",
-    #                     height="100%",
-    #                     # 左边框 黑色
-    #                     # border="2px solid #000",
-    #                     border="2px solid rgba(0, 123, 255, 1)",  # 内部边框
-    #                 )
-    #             )
-    #         ],
-    #         key=uuid + "+矩形",
-    #         id={"type": "RND", "id": uuid},
-    #         size={"width": 200, "height": 200},
-    #         minHeight=20,
-    #         minWidth=20,
-    #         position={"x": pageX, "y": pageY},
-    #         bounds="parent",
-    #         # selected=False,
-    #         selectedStyle={
-    #             "boxShadow": "0 0 8px rgba(0, 123, 255, 0.6)",  # 外部阴影
-    #             "border": "2px solid rgba(0, 123, 255, 0.8)",  # 外部边框
-    #             "opacity": 0.9,  # 选中时的透明度
-    #         },
-    #     )
-    # elif data == "表格":
-    #     拖拽模块 = fuc.FefferyRND(
-    #         [
-    #             fac.AntdTable(
-    #                 columns=[
-    #                     {"title": "int型示例", "dataIndex": "int型示例"},
-    #                     {"title": "float型示例", "dataIndex": "float型示例"},
-    #                     {"title": "str型示例", "dataIndex": "str型示例"},
-    #                 ],
-    #                 data=[
-    #                     {
-    #                         "int型示例": 123,
-    #                         "float型示例": 1.23,
-    #                         "str型示例": "示例字符",
-    #                     }
-    #                 ],
-    #                 bordered=True,
-    #                 pagination=False,
-    #                 style=style(
-    #                     width="100%",
-    #                     height="100%",
-    #                 ),
-    #             )
-    #         ],
-    #         key=uuid + "+表格",
-    #         id={"type": "RND", "id": uuid},
-    #         size={"width": 500, "height": 100},
-    #         position={"x": 5, "y": pageY},
-    #         direction=[],  # 关闭尺寸调整功能
-    #         # dragAxis='y',
-    #         bounds="parent",
-    #         selected=True,
-    #     )
-    # elif data == "二维码":
-    #     拖拽模块 = fuc.FefferyRND(
-    #         [
-    #             fuc.FefferyQRCode(
-    #                 value="FefferyQRCode示例",
-    #                 size=100,
-    #             )
-    #         ],
-    #         key=uuid + "+二维码",
-    #         id={"type": "RND", "id": uuid},
-    #         size={"width": 100, "height": 100},
-    #         minHeight=10,
-    #         minWidth=10,
-    #         position={"x": pageX, "y": pageY},
-    #         direction=[],  # 关闭尺寸调整功能
-    #         bounds="parent",
-    #         selected=True,
-    #     )
-
-    # return [拖拽模块] if children == None else [*children, 拖拽模块]
-
 
 # 表单生成
 @app.callback(
@@ -209,24 +51,55 @@ def component_edit_container(position, size, selected, key):
         return dash.no_update
 
     triggered_id = dash.ctx.triggered_id
-    for i, k in enumerate(key):
-        if k.split("+")[0] == triggered_id["id"]:
-            component_key = k.split("+")[1]
-            # logger.debug(size[i])
-            data = {
-                "坐标": position[i],
-                "大小": {
-                    key: int(value.replace("px", ""))
-                    if isinstance(value, str)
-                    else value
-                    for key, value in size[i].items()
-                },
-                "key": component_key,
-                "id": triggered_id["id"],
-            }
-            break
+
+    # 创建数据库会话
+    session = Session()
+    # 检查是否已存在相同 component_id 的记录
+    existing = (
+        session.query(ComponentLayout)
+        .filter_by(component_id=key[-1].split("+")[0])
+        .first()
+    )
+    # 关闭数据库会话
+    session.close()
+
+    # logger.debug(f"触发的组件ID: {existing}")
+
+    if existing:
+        logger.debug("已存在的组件被选中，更新表单数据")
+        # 如果是已存在的组件
+        for i, k in enumerate(key):
+            if k.split("+")[0] == triggered_id["id"]:
+                component_key = k.split("+")[1]
+                # logger.debug(size[i])
+                data = {
+                    "坐标": position[i],
+                    "大小": {
+                        key: int(value.replace("px", ""))
+                        if isinstance(value, str)
+                        else value
+                        for key, value in size[i].items()
+                    },
+                    "key": component_key,
+                    "id": triggered_id["id"],
+                }
+                break
+        else:
+            return dash.no_update
     else:
-        return dash.no_update
+        logger.debug("新组件被选中，创建新的表单数据")
+        # 处理新组件的情况
+        rnd_id = key[-1].split("+")
+        component_key = rnd_id[1]  # 获取组件的key
+        data = {
+            "坐标": position[-1],
+            "大小": {
+                key: int(value.replace("px", "")) if isinstance(value, str) else value
+                for key, value in size[-1].items()
+            },
+            "key": component_key,
+            "id": rnd_id[0],  # 获取组件的ID
+        }
 
     config = COMPONENT_CONFIGS.get(component_key)
     if not config:
@@ -244,37 +117,25 @@ def component_edit_container(position, size, selected, key):
         # 检查是否已存在相同 component_id 的记录
         existing = session.query(ComponentLayout).filter_by(component_id=id).first()
         if existing:
-            # logger.debug(f"组件数据替换成功: {existing.layout_data}")
             comp_type = existing.layout_data.get("type")
-            # default_values["X"] = existing.layout_data["position"]["x"]
-            # default_values["Y"] = existing.layout_data["position"]["y"]
             if comp_type == "horizontal_line":
                 pass
-                # default_values["W"] = existing.layout_data["size"]["width"]
             elif comp_type == "vertical_line":
                 pass
-                # default_values["W"] = existing.layout_data["size"]["height"]
             elif comp_type == "text":
                 default_values["内容"] = existing.layout_data["extra"]["content"]
                 default_values["类型"] = existing.layout_data["extra"]["data_type"]
                 default_values["字体大小"] = existing.layout_data["extra"]["fontSize"]
             elif comp_type == "rectangle":
                 pass
-                # default_values["W"] = existing.layout_data["size"]["width"]
-                # default_values["W"] = existing.layout_data["size"]["height"]
             elif comp_type == "table":
-                # {"position": {"x": 272, "y": 231}, "size": {}, "type": "table", "extra": {"columns": [{"title": "字段名称", "dataIndex": "name", "width": "20%"}], "data": [{"name": "name"}]}}
-
-                # print(existing.layout_data["extra"]["columns"])
-
                 table_data = existing.layout_data["extra"]["columns"]
-
             elif comp_type == "qrcode":
                 default_values["数据类型"] = existing.layout_data["extra"]["data_type"]
                 default_values["大小"] = existing.layout_data["extra"]["size"]
                 default_values["数据框"] = existing.layout_data["extra"]["value"]
 
-            # 捕获任何可能发生的异常
+    # 捕获任何可能发生的异常
     except Exception as e:
         logger.debug(f"组件数据替换错误: {str(e)}")
         # 如果发生错误，回滚会话，撤销所有未提交的更改
@@ -298,7 +159,7 @@ def component_edit_container(position, size, selected, key):
                         style=style(width="50%"),
                     ),
                     fac.AntdButton(
-                        "取消",
+                        "移除",
                         id={"type": "RND_Button_Cancel", "id": data["id"]},
                         type="primary",
                         style=style(width="50%"),
@@ -361,6 +222,7 @@ def Set_up_Printed_paper(value, w, h, _width, _height, template_name):
         session = Session()
         # 检查是否已有该模板的纸张大小记录
         paper = session.query(PaperSize).filter_by(template_name=template_name).first()
+        logger.debug("当前纸张大小记录:", paper)
         if paper:
             # 如果记录存在，直接更新所有字段
             paper.type_name = type_name
@@ -461,8 +323,8 @@ def RND_Button_Confirm(nClicks, values, table_data, load_template_input):
                 "size": {"width": values[0]["W"], "height": values[0]["H"]},
             },
         )
-    elif table_data:  # 表格
-        # logger.debug(f"表格数据：{table_data}")
+    elif len(table_data) > 0:  # 表格
+        logger.debug(f"表格数据：{table_data}")
 
         layout_data["type"] = "table"
         layout_data["size"] = {"width": values[0]["W"], "height": values[0]["H"]}
@@ -523,11 +385,13 @@ def RND_Button_Confirm(nClicks, values, table_data, load_template_input):
         session = Session()
         # 检查是否已存在相同 component_id 的记录
         existing = session.query(ComponentLayout).filter_by(component_id=id).first()
+        # 如果存在，则更新记录；如果不存在，则创建新记录
         if existing:
             # 更新现有记录
             existing.template_name = load_template_input
             existing.layout_data = layout_data
         else:
+            logger.debug(f"组件 {id} 不存在，创建新记录")
             # 创建新记录
             component = ComponentLayout(
                 component_id=id,
