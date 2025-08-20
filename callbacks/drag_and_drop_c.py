@@ -192,8 +192,8 @@ def component_edit_container(position, size, selected, key):
     State("load-template-input", "value"),  # 新增：获取模板名称
     prevent_initial_call=True,
 )
-def Set_up_Printed_paper(value, w, h, _width, _height, template_name):
-    if not template_name:  # 检查模板名称是否为空
+def Set_up_Printed_paper(value, w, h, _width, _height, template_name_):
+    if not template_name_:  # 检查模板名称是否为空
         return dash.no_update
 
     # 根据选择确定纸张大小
@@ -221,8 +221,9 @@ def Set_up_Printed_paper(value, w, h, _width, _height, template_name):
     try:
         session = Session()
         # 检查是否已有该模板的纸张大小记录
-        paper = session.query(PaperSize).filter_by(template_name=template_name).first()
-        logger.debug("当前纸张大小记录:", paper)
+        paper = session.query(PaperSize).filter_by(template_name=template_name_).first()
+        paper_dict = {k: v for k, v in paper.__dict__.items() if not k.startswith('_')}
+        logger.debug(f"当前纸张大小记录: {paper_dict}")
         if paper:
             # 如果记录存在，直接更新所有字段
             paper.type_name = type_name
@@ -236,7 +237,7 @@ def Set_up_Printed_paper(value, w, h, _width, _height, template_name):
         else:
             # 如果记录不存在，创建新记录
             paper = PaperSize(
-                template_name=template_name,
+                template_name=template_name_,
                 type_name=type_name,
                 width_mm=width_mm,
                 height_mm=height_mm,
@@ -466,6 +467,7 @@ def remove_component_and_delete(n_clicks, children, values):
 # 加载模板
 @app.callback(
     Output("listen-drop-target", "children", allow_duplicate=True),
+    Output("Printed-paper", "value"),
     Input("load-template", "nClicks"),
     State("load-template-input", "value"),
     State("json-data-input", "value"),  # 新增：JSON 数据输入框的值
@@ -500,7 +502,11 @@ def load_components_from_db(n_clicks, template_name, json_data_str):
         # 创建数据库会话
         # - Session() 生成一个新的数据库会话实例，用于执行查询
         session = Session()
-        # 查询数据库
+
+        # 查询模版的纸张大小
+        paper = session.query(PaperSize).filter_by(template_name=template_name).first()
+
+        # 查询数据库,布局模版
         # - 从 ComponentLayout 表中筛选出 template_name 匹配的记录
         # - .all() 返回所有匹配的结果列表
         components = (
@@ -524,7 +530,7 @@ def load_components_from_db(n_clicks, template_name, json_data_str):
             for comp in components
             if render_component(comp.component_id, comp.layout_data)
         ]
-        return rendered_components
+        return rendered_components, paper.type_name
     except Exception as e:
         logger.debug(f"加载组件失败: {str(e)}")
         return dash.no_update

@@ -25,9 +25,9 @@ def DragAndDrop():
                                                 "打印模板3",
                                             ]
                                         ],
-                                        style={"width": "50%"},
                                         value="打印模板1",
                                         id="load-template-input",
+                                        style={"width": "50%"},
                                     ),
                                     fac.AntdButton(
                                         "加载模板",
@@ -152,7 +152,7 @@ def DragAndDrop():
                                     ],
                                     id="Printed-paper",
                                     className="check-card-group-custom-style-demo",
-                                    defaultValue="A5",
+                                    # defaultValue="A5",
                                     multiple=False,
                                 ),
                                 fac.AntdInputNumber(
