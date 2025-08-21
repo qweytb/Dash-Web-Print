@@ -150,3 +150,52 @@ def execute_js_demo_2(screenshotResult):
     """
 
     return js
+
+@app.callback(
+    Output("print-js-window", "jsString", allow_duplicate=True),
+    Input("print-target-trigger-pdf", "nClicks"),
+    prevent_initial_call=True,
+)
+def execute_js_demo_2_pdf(nClicks):
+    if not nClicks:
+        return dash.no_update
+    import uuid
+    return (
+        f'''
+        var a = "{uuid.uuid4()}" // 为保证jsString每次都有变动
+        var element = document.getElementById("print-preview-container")
+        '''
+        """
+        html2pdf()
+        .set({
+            margin: 0,
+            padding: 1,
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: {
+                dpi: 192,
+                scale: 4,
+                logging: true,
+                useCORS: true,
+                y: 0,
+                scrollX: 0,
+                scrollY: 0,
+                width: element.offsetWidth,
+                pagebreak: { mode: ['avoid-all'] },
+                height: element.scrollHeight
+            },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'p' }
+        })
+        .from(element)
+        .toPdf()
+        .get('pdf')
+        .then(function(pdf) {
+            if (pdf.getNumberOfPages() > 1) {
+            pdf.deletePage(2); // 删除第二页
+            }
+            return pdf.output('bloburl');
+        })
+        .then(function(pdfUrl){
+            window.open(pdfUrl, '_blank');
+        });
+        """
+    )

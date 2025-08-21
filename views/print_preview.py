@@ -22,6 +22,9 @@ from configs.drag_and_drop_config import (
 
 import callbacks.print_preview_c
 
+# 导入测试参数 
+from configs.demo_config import Demo_Config
+
 
 # http://127.0.0.1:6969/print_preview?template=打印模板1&order_ID=12345
 def PrintPreview(href):
@@ -36,15 +39,7 @@ def PrintPreview(href):
         # 获取数据库订单数据data
         order_ID = get_query.get("order_ID")
         # 模拟数据
-        json_data = {
-            "order_number": "INV-001",
-            "customer_name": "张三",
-            "items": [
-                {"name": "商品A", "quantity": 2, "price": 50.00},
-                {"name": "商品B", "quantity": 1, "price": 100.00},
-            ],
-            "qrcode_url": "https://example.com/invoice/INV-001",
-        }
+        json_data =Demo_Config.data
 
         # print("这是输入的json数据", json_data)
         try:
@@ -97,14 +92,6 @@ def PrintPreview(href):
         return [
             fac.AntdSpace(
                 [
-                    # 示例http请求组件
-                    fuc.FefferyHttpRequests(id="http-requests"),
-                    fuc.FefferyWebSocket(
-                        id="websocket-print",
-                        socketUrl="ws://127.0.0.1:12212/printer",
-                    ),
-                    # 元素转图片
-                    fuc.FefferyDom2Image(id="print-target"),
                     fuc.FefferyDiv(
                         id="print-preview-container",
                         children=rendered_components,
@@ -114,6 +101,14 @@ def PrintPreview(href):
                             height=f"{paper.height_mm}mm",
                         ),
                     ),
+                    # 示例http请求组件
+                    fuc.FefferyHttpRequests(id="http-requests"),
+                    fuc.FefferyWebSocket(
+                        id="websocket-print",
+                        socketUrl="ws://127.0.0.1:12212/printer",
+                    ),
+                    # 元素转图片
+                    fuc.FefferyDom2Image(id="print-target"),
                     fac.AntdSpace(
                         [
                             fuc.FefferyExecuteJs(id="print-js-window"),
@@ -123,6 +118,13 @@ def PrintPreview(href):
                                 "弹窗打印",
                                 id="print-popup-window",
                                 type="primary",
+                            ),
+                             fac.AntdButton(
+                                "PDF打印",
+                                id="print-target-trigger-pdf",
+                                type="primary",
+                                # autoSpin=True,
+                                # loadingChildren="打印中",
                             ),
                             fac.AntdButton(
                                 "静默打印",

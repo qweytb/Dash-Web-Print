@@ -488,7 +488,7 @@ def load_components_from_db(n_clicks, template_name, json_data_str):
     # - 如果用户未输入模板名称，则无需执行后续逻辑，直接返回不更新
     if not template_name:
         return dash.no_update
-
+    
     # 如果提供了 JSON 数据，尝试解析
     json_data = {}
     if json_data_str:
