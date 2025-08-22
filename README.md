@@ -5,7 +5,7 @@
 
 **版本：** 0.1.4  
 **许可证：** MIT
-**最后更新：** 2025年3月21日  
+**最后更新：** 2025年8月22日  
 
 ## 项目概览
 
@@ -294,6 +294,7 @@ pip install dash flask flask-login feffery_antd_components feffery_utils_compone
 ![03](03.png)
 
 ![04](04.png)
+![05](05.png)
 
 ![](05.webp)
 
