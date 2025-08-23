@@ -269,6 +269,22 @@ pip install dash flask flask-login feffery_antd_components feffery_utils_compone
 
 ---
 
+## API 数据集成 位置
+1. **viewassets/print_preview.py：**
+  - `PrintPreview` 类：
+  **拖拽事件处理：**
+  ```python
+   # ==============API 数据集成到打印预览模版====================
+   # 模板名称
+   template_name = get_query.get("template")
+   # 获取数据库订单数据data
+   order_ID = get_query.get("order_ID")
+   logger.info(f"订单ID：{order_ID}")
+   # 模拟数据
+   json_data = Demo_Config.data
+   # ===============================================================
+   ```
+
 ## 贡献指南
 
 欢迎为布局助手贡献代码！请按照以下步骤参与：

@@ -31,15 +31,15 @@ def PrintPreview(href):
     url_href = URL(href)
     get_query = url_href.query
     if get_query:
-        # print(f"查询参数：{get_query}")
-
+        # ==============API 数据集成到打印预览模版====================
         # 模板名称
         template_name = get_query.get("template")
-
         # 获取数据库订单数据data
         order_ID = get_query.get("order_ID")
+        logger.info(f"订单ID：{order_ID}")
         # 模拟数据
         json_data = Demo_Config.data
+        # ===============================================================
 
         # print("这是输入的json数据", json_data)
         try:
