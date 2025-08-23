@@ -222,7 +222,7 @@ def Set_up_Printed_paper(value, w, h, _width, _height, template_name_):
         session = Session()
         # 检查是否已有该模板的纸张大小记录
         paper = session.query(PaperSize).filter_by(template_name=template_name_).first()
-        paper_dict = {k: v for k, v in paper.__dict__.items() if not k.startswith('_')}
+        paper_dict = {k: v for k, v in paper.__dict__.items() if not k.startswith("_")}
         logger.debug(f"当前纸张大小记录: {paper_dict}")
         if paper:
             # 如果记录存在，直接更新所有字段
@@ -488,7 +488,7 @@ def load_components_from_db(n_clicks, template_name, json_data_str):
     # - 如果用户未输入模板名称，则无需执行后续逻辑，直接返回不更新
     if not template_name:
         return dash.no_update
-    
+
     # 如果提供了 JSON 数据，尝试解析
     json_data = {}
     if json_data_str:
@@ -519,7 +519,7 @@ def load_components_from_db(n_clicks, template_name, json_data_str):
         # 如果没有找到任何组件
         # - 返回空列表，清空目标容器内容
         if not components:
-            return []
+            return [], paper.type_name
         rendered_components = [
             render_component(
                 comp.component_id,

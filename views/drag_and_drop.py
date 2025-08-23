@@ -7,8 +7,9 @@ import json
 # 导入监听拖拽和放置的回调函数
 from callbacks import drag_and_drop_c
 
-# 导入测试参数 
+# 导入测试参数
 from configs.demo_config import Demo_Config
+
 
 def DragAndDrop():
     return (
@@ -109,7 +110,9 @@ def DragAndDrop():
                                     id="json-data-input",
                                     placeholder="JSON数据",
                                     mode="text-area",
-                                    value=json.dumps(Demo_Config.data, ensure_ascii=False, indent=4)
+                                    value=json.dumps(
+                                        Demo_Config.data, ensure_ascii=False, indent=4
+                                    ),
                                 ),
                             ],
                             style=style(

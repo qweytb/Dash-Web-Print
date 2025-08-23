@@ -22,7 +22,7 @@ from configs.drag_and_drop_config import (
 
 import callbacks.print_preview_c
 
-# 导入测试参数 
+# 导入测试参数
 from configs.demo_config import Demo_Config
 
 
@@ -39,7 +39,7 @@ def PrintPreview(href):
         # 获取数据库订单数据data
         order_ID = get_query.get("order_ID")
         # 模拟数据
-        json_data =Demo_Config.data
+        json_data = Demo_Config.data
 
         # print("这是输入的json数据", json_data)
         try:
@@ -89,75 +89,94 @@ def PrintPreview(href):
             logger.debug(f"加载组件失败: {str(e)}")
             return dash.no_update
 
-        return [
-            fac.AntdSpace(
-                [
-                    fuc.FefferyDiv(
-                        id="print-preview-container",
-                        children=rendered_components,
-                        shadow="always-shadow-light",
-                        style=style(
-                            width=f"{paper.width_mm}mm",
-                            height=f"{paper.height_mm}mm",
-                        ),
-                    ),
-                    # 示例http请求组件
-                    fuc.FefferyHttpRequests(id="http-requests"),
-                    fuc.FefferyWebSocket(
-                        id="websocket-print",
-                        socketUrl="ws://127.0.0.1:12212/printer",
-                    ),
-                    # 元素转图片
-                    fuc.FefferyDom2Image(id="print-target"),
-                    fac.AntdSpace(
+        return fac.AntdRow(
+            [
+                fac.AntdCol(
+                    html.Div(
                         [
-                            fuc.FefferyExecuteJs(id="print-js-window"),
-                            # 元素转图片
-                            fuc.FefferyDom2Image(id="print-target-window"),
-                            fac.AntdButton(
-                                "弹窗打印",
-                                id="print-popup-window",
-                                type="primary",
+                            html.Div(
+                                children=rendered_components,
+                                id="print-preview-container",
+                                style=style(
+                                    width=f"{paper.width_mm}mm",
+                                    height=f"{paper.height_mm}mm",
+                                    # 相对定位
+                                    position="relative",
+                                    margin="0",
+                                    padding="0",
+                                ),
                             ),
-                             fac.AntdButton(
-                                "PDF打印",
-                                id="print-target-trigger-pdf",
-                                type="primary",
-                                # autoSpin=True,
-                                # loadingChildren="打印中",
-                            ),
-                            fac.AntdButton(
-                                "静默打印",
-                                id="print-target-trigger",
-                                type="primary",
-                                # autoSpin=True,
-                                # loadingChildren="打印中",
-                            ),
-                            fac.AntdButton(
-                                "连接ws打印服务器",
-                                id="print-target-ws",
-                                type="primary",
-                                autoSpin=True,
-                                loadingChildren="连接中",
-                            ),
-                            fac.AntdCompact(
-                                [
-                                    fac.AntdButton(
-                                        "获取打印机列表",
-                                        id="print-target-list",
-                                        type="primary",
-                                        autoSpin=True,
-                                        loadingChildren="获取中",
-                                    ),
-                                    fac.AntdSelect(
-                                        id="print-target-select",
-                                        style={"width": 380},
-                                    ),
-                                ]
-                            ),
-                        ]
+                        ],
+                        style=style(border="1px solid #8c8c8c", background="white"),
                     ),
-                ],
-                direction="vertical",
-            )
-        ]
+                ),
+                fac.AntdCol(
+                    [
+                        # 示例http请求组件
+                        fuc.FefferyHttpRequests(id="http-requests"),
+                        fuc.FefferyWebSocket(
+                            id="websocket-print",
+                            socketUrl="ws://127.0.0.1:12212/printer",
+                        ),
+                        # 元素转图片
+                        fuc.FefferyDom2Image(id="print-target"),
+                        fac.AntdSpace(
+                            [
+                                fuc.FefferyExecuteJs(id="print-js-window"),
+                                # 元素转图片
+                                fuc.FefferyDom2Image(id="print-target-window"),
+                                fac.AntdButton(
+                                    "弹窗打印",
+                                    id="print-popup-window",
+                                    type="primary",
+                                ),
+                                fac.AntdButton(
+                                    "PDF打印",
+                                    id="print-target-trigger-pdf",
+                                    type="primary",
+                                    # autoSpin=True,
+                                    # loadingChildren="打印中",
+                                ),
+                                fac.AntdButton(
+                                    "静默打印",
+                                    id="print-target-trigger",
+                                    type="primary",
+                                    # autoSpin=True,
+                                    # loadingChildren="打印中",
+                                ),
+                                fac.AntdButton(
+                                    "连接ws打印服务器",
+                                    id="print-target-ws",
+                                    type="primary",
+                                    autoSpin=True,
+                                    loadingChildren="连接中",
+                                ),
+                                fac.AntdCompact(
+                                    [
+                                        fac.AntdButton(
+                                            "获取打印机列表",
+                                            id="print-target-list",
+                                            type="primary",
+                                            autoSpin=True,
+                                            loadingChildren="获取中",
+                                        ),
+                                        fac.AntdSelect(
+                                            id="print-target-select",
+                                            style={"width": 380},
+                                        ),
+                                    ]
+                                ),
+                            ],
+                            direction="vertical",
+                        ),
+                    ]
+                ),
+            ],
+            gutter=30,
+            style=style(
+                padding="30px",
+                boxSizing="border-box",
+                width="100%",
+                height="100%",
+            ),
+        )

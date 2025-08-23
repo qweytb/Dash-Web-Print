@@ -125,7 +125,13 @@ def get_print_target_2(nClicks):
 def execute_js_demo_2(screenshotResult):
     data = screenshotResult.get("dataUrl")  # .split("base64,")[-1]
 
-    # print(data)
+    # import base64
+
+    # img_bytes = base64.b64decode(data.split("base64,")[-1])
+
+    # with open("output.jpg", "wb") as f:
+    #     f.write(img_bytes)
+    # print("已保存为 output.jpg")
 
     # 创建包含 base64 图像的 HTML 内容
     html_content = f"""
@@ -151,6 +157,7 @@ def execute_js_demo_2(screenshotResult):
 
     return js
 
+
 @app.callback(
     Output("print-js-window", "jsString", allow_duplicate=True),
     Input("print-target-trigger-pdf", "nClicks"),
@@ -160,6 +167,7 @@ def execute_js_demo_2_pdf(nClicks):
     if not nClicks:
         return dash.no_update
     import uuid
+
     return (
         f'''
         var a = "{uuid.uuid4()}" // 为保证jsString每次都有变动
@@ -168,12 +176,10 @@ def execute_js_demo_2_pdf(nClicks):
         """
         html2pdf()
         .set({
-            margin: 0,
-            padding: 1,
             image: { type: 'jpeg', quality: 1 },
             html2canvas: {
                 dpi: 192,
-                scale: 4,
+                scale: 1,
                 logging: true,
                 useCORS: true,
                 y: 0,
