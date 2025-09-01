@@ -7,8 +7,7 @@ from sqlalchemy import (
     Text,
     DateTime,
 )
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.orm import sessionmaker, relationship, declarative_base
 import datetime
 import json
 
@@ -98,6 +97,22 @@ class ComponentLayout(Base):
     # 定义对象的字符串表示形式，便于调试和日志输出
     def __repr__(self):
         return f"<ComponentLayout(id={self.id}, component_id='{self.component_id}', template_name='{self.template_name}')>"
+
+
+# 增加数据源字段维护
+class DataSource(Base):
+    __tablename__ = "data_sources"
+    # 主键，自增整数
+    id = Column(Integer, primary_key=True)
+    # 数据源名称
+    name = Column(String(100), nullable=False)
+    # 数据源类型
+    type = Column(String(50), nullable=False)
+    # 数据源配置
+    config = Column(JSONEncodedText, nullable=True)
+
+    def __repr__(self):
+        return f"<DataSource(id={self.id}, name='{self.name}', type='{self.type}')>"
 
 
 # 初始化数据库函数

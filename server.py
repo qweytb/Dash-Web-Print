@@ -1,12 +1,25 @@
 import dash
-from flask import request, abort
+from flask import request, abort, Flask, jsonify
 import ipaddress
 from user_agents import parse
 from flask_login import LoginManager, UserMixin
 
 from configs import ip_config, BaseConfig
 
+import uuid
+from configs.drag_and_drop_config import json_data
+
+# 从 数据文件导入
+from models.drag_and_drop_m import (
+    ComponentLayout,
+    PaperSize,
+    Session,
+)
+
 VERSION = "0.1.4"  # 定义版本号
+
+# 创建 Flask 服务器
+# server_api = Flask(__name__)
 
 app = dash.Dash(
     __name__,
@@ -15,6 +28,7 @@ app = dash.Dash(
     compress=True,  # 隐式依赖flask-compress
     update_title=None,
     serve_locally=True,
+    # server=server_api,
 )
 
 server = app.server
@@ -131,3 +145,49 @@ def check_browser():
                         [rule["browser"] for rule in BaseConfig.min_browser_versions]
                     )
                 )
+
+
+# 获取打印模版列表
+@app.server.route("/print-templates", methods=["GET"])
+def get_print_templates():
+    # 这里是获取打印模版列表的逻辑
+
+    session = Session()
+    components = session.query(PaperSize).all()
+    session.close()
+
+    # 直接转为字典列表
+    result = [
+        {k: v for k, v in c.__dict__.items() if not k.startswith("_")}
+        for c in components
+    ]
+
+    return result
+
+
+# 获取单个打印模版的动态字段
+@app.server.route("/print-templates/template_name", methods=["GET"])
+def get_print_template():
+    # 这里是获取单个打印模版的逻辑
+    name = request.args.get("template")
+    session = Session()
+    components = session.query(ComponentLayout).filter_by(template_name=name).all()
+    session.close()
+    json_data = []
+    for component in components:
+        extra = component.layout_data.get("extra")
+        if extra and extra["data_type"] == "动态数据":
+            json_data.append(extra["content"])
+
+    return json_data
+
+
+# 缓存打印的动态字段
+@app.server.route("/print-templates/cache", methods=["POST"])
+def cache_print_template():
+    data = request.json
+    # # 这里是缓存打印的动态字段的逻辑
+    template_id = str(uuid.uuid4())
+    json_data[template_id] = data
+
+    return {"order_id": template_id}

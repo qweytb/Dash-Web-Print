@@ -1,36 +1,50 @@
-name: drag_and_drop_env
-channels:
-  - conda-forge
-dependencies:
-  - bzip2=1.0.8=h2466b09_7
-  - ca-certificates=2025.1.31=h56e8100_0
-  - libexpat=2.6.4=he0c23c2_0
-  - libffi=3.4.6=h537db12_0
-  - liblzma=5.6.4=h2466b09_0
-  - libsqlite=3.49.1=h67fdade_2
-  - libzlib=1.3.1=h2466b09_2
-  - openssl=3.4.1=ha4e3fda_0
-  - pip=25.0.1=pyh8b19718_0
-  - python=3.12.9=h3f84c4b_1_cpython
-  - setuptools=75.8.2=pyhff2d567_0
-  - tk=8.6.13=h5226925_1
-  - tzdata=2025a=h78e105d_0
-  - ucrt=10.0.22621.0=h57928b3_1
-  - vc=14.3=hbf610ac_24
-  - vc14_runtime=14.42.34438=hfd919c2_24
-  - wheel=0.45.1=pyhd8ed1ab_1
-  - pip:
-    - Flask-Compress==1.17
-    - Flask-Login==0.6.3
-    - SQLAlchemy==2.0.39
-    - feffery_antd_components==0.3.12
-    - feffery_dash_utils==0.2.1
-    - feffery_leaflet_components==0.1.0rc4
-    - feffery_utils_components==0.2.0rc25
-    - loguru==0.7.3
-    - pillow==11.1.0
-    - reportlab==4.3.1
-    - user-agents==2.2.0
-    - yarl==1.18.3
-
-prefix: "D:\\miniforge3\\envs\\drag_and_drop_env"
+# This file may be used to create an environment using:
+# $ conda create --name <env> --file <this file>
+# platform: win-64
+# created-by: conda 25.3.0
+blinker=1.9.0=pypi_0
+brotli=1.1.0=pypi_0
+bzip2=1.0.8=h2bbff1b_6
+ca-certificates=2025.7.15=haa95532_0
+certifi=2025.8.3=pypi_0
+charset-normalizer=3.4.3=pypi_0
+click=8.2.1=pypi_0
+colorama=0.4.6=pypi_0
+expat=2.7.1=h8ddb27b_0
+flask=3.1.1=pypi_0
+flask-compress=1.18=pypi_0
+greenlet=3.2.4=pypi_0
+idna=3.10=pypi_0
+importlib-metadata=8.7.0=pypi_0
+itsdangerous=2.2.0=pypi_0
+jinja2=3.1.6=pypi_0
+libffi=3.4.4=hd77b12b_1
+markupsafe=3.0.2=pypi_0
+narwhals=2.1.2=pypi_0
+nest-asyncio=1.6.0=pypi_0
+openssl=3.0.17=h35632f6_0
+packaging=25.0=pypi_0
+pillow=11.3.0=pypi_0
+pip=25.1=pyhc872135_2
+plotly=6.3.0=pypi_0
+python=3.12.11=h716150d_0
+pyzstd=0.17.0=pypi_0
+reportlab=4.4.3=pypi_0
+requests=2.32.5=pypi_0
+retrying=1.4.2=pypi_0
+setuptools=78.1.1=py312haa95532_0
+sqlalchemy=2.0.43=pypi_0
+sqlite=3.50.2=hda9a48d_1
+tk=8.6.15=hf199647_0
+typing-extensions=4.14.1=pypi_0
+tzdata=2025b=h04d1e81_0
+ucrt=10.0.22621.0=haa95532_0
+urllib3=2.5.0=pypi_0
+vc=14.3=h2df5915_10
+vc14_runtime=14.44.35208=h4927774_10
+vs2015_runtime=14.44.35208=ha6b5a95_10
+werkzeug=3.1.3=pypi_0
+wheel=0.45.1=py312haa95532_0
+xz=5.6.4=h4754444_1
+zipp=3.23.0=pypi_0
+zlib=1.2.13=h8cc25b3_1

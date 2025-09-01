@@ -5,6 +5,15 @@ import feffery_antd_components as fac
 from feffery_dash_utils.style_utils import style
 from dash import set_props
 
+# 临时数据库
+from expiringdict import ExpiringDict
+
+# 创建一个最大长度为100，条目存活时间为30秒的字典
+json_data = ExpiringDict(max_len=100, max_age_seconds=30)
+
+
+from configs.demo_config import Demo_Config
+
 
 # 组件渲染函数（统一处理拖拽创建和数据库加载）
 def render_component(
@@ -61,6 +70,7 @@ def render_component(
     # 类型特定配置
     if comp_type in ["横线", "horizontal_line"]:
         size = size or {"width": 100, "height": 2}
+
         return fuc.FefferyRND(
             [html.Div(style=style(width="100%", borderTop="2px solid #000"))],
             key=f"{component_id}+横线",
@@ -119,7 +129,7 @@ def render_component(
     elif comp_type in ["表格", "table"]:
         size = size or {"width": 500, "height": 100}
         extra.setdefault(
-            "columns",
+            "content",
             [
                 {"title": "int型示例", "dataIndex": "int型示例"},
                 {"title": "float型示例", "dataIndex": "float型示例"},
@@ -132,7 +142,7 @@ def render_component(
         return fuc.FefferyRND(
             [
                 fac.AntdTable(
-                    columns=extra["columns"],
+                    columns=extra["content"],
                     data=extra["data"],
                     bordered=True,
                     pagination=False,
@@ -146,15 +156,35 @@ def render_component(
         )
     elif comp_type in ["二维码", "qrcode"]:
         size = size or {"width": 100, "height": 100}
-        extra.setdefault("value", "FefferyQRCode示例")
+        extra.setdefault("content", "")
         extra.setdefault("size", 100)
         return fuc.FefferyRND(
-            [fuc.FefferyQRCode(value=extra["value"], size=extra["size"])],
+            [fuc.FefferyQRCode(value=extra["content"], size=extra["size"])],
             key=f"{component_id}+二维码",
             size=size,
             minHeight=10,
             minWidth=10,
             direction=[],  # 二维码默认不可调整大小
+            **base_config,
+        )
+    elif comp_type in ["图片", "image"]:
+        size = size or {"width": 100, "height": 100}
+        extra.setdefault("content", "")
+        extra.setdefault("size", 100)
+        return fuc.FefferyRND(
+            [
+                html.Img(
+                    src=extra["content"],
+                    height=extra["size"],
+                    style={"width": "100%", "height": "100%"},
+                ),
+            ],
+            key=f"{component_id}+图片",
+            size=size,
+            # minHeight=10,
+            # minWidth=10,
+            style=style(border="1px dashed #000") if not disableDragging else {},
+            direction=["top", "right", "bottom", "left"] if not disableDragging else [],
             **base_config,
         )
     return None
@@ -174,7 +204,13 @@ def update_component(component_id, layout_data):
         )
     elif comp_type in ["二维码", "qrcode"]:
         props["children"] = fuc.FefferyQRCode(
-            value=layout_data["extra"]["value"], size=layout_data["extra"]["size"]
+            value=layout_data["extra"]["columns"], size=layout_data["extra"]["size"]
+        )
+    elif comp_type in ["图片", "image"]:
+        props["children"] = html.Img(
+            src=layout_data["extra"]["base64"],
+            height=layout_data["extra"]["size"],
+            style={"width": "100%", "height": "100%"},
         )
     elif comp_type in ["表格", "table"]:
         props["children"] = fac.AntdTable(
@@ -259,9 +295,9 @@ COMPONENT_CONFIGS = {
                 "span": 24,
             },
             {
-                "name": "类型",
+                "name": "数据类型",
                 "component": "AntdSelect",
-                "label": "类型",
+                "label": "数据类型",
                 "options": [{"label": i, "value": i} for i in ["静态数据", "动态数据"]],
                 "span": 12,
             },  # 一行两个
@@ -286,7 +322,7 @@ COMPONENT_CONFIGS = {
             "W": data["大小"]["width"],
             "H": data["大小"]["height"],
             "内容": "示例文本",
-            "类型": "静态数据",
+            "数据类型": "静态数据",
             "字体大小": 14,
         },
     },
@@ -332,6 +368,11 @@ COMPONENT_CONFIGS = {
             "Y": data["坐标"]["y"],
             "W": data["大小"]["width"],
             "H": data["大小"]["height"],
+            "columns": [
+                {"title": "字段名", "dataIndex": "field", "key": "field", "width": 100},
+                {"title": "字段类型", "dataIndex": "type", "key": "type", "width": 100},
+                {"title": "字段值", "dataIndex": "value", "key": "value", "width": 100},
+            ],
         },
     },
     "二维码": {
@@ -359,7 +400,7 @@ COMPONENT_CONFIGS = {
                 "span": 12,
             },  # 一行两个
             {
-                "name": "大小",
+                "name": "二维码大小",
                 "component": "AntdInputNumber",
                 "label": "二维码大小",
                 "style": {"width": "100%"},
@@ -372,8 +413,50 @@ COMPONENT_CONFIGS = {
             "X": data["坐标"]["x"],
             "Y": data["坐标"]["y"],
             "数据类型": "静态数据",
-            "大小": 100,
+            "二维码大小": 100,
             "数据框": "数据框",
+        },
+    },
+    "图片": {
+        "fields": [
+            {
+                "name": "组件ID",
+                "component": "AntdInput",
+                "label": "组件ID",
+                "span": 24,
+            },  # 一行两个
+            {
+                "name": "坐标",
+                "component": "PositionInputs",
+                "label": "坐标",
+                "span": 24,
+            },  # 一行两个
+            {
+                "name": "数据类型",
+                "component": "AntdSelect",
+                "label": "数据类型",
+                "options": [
+                    {"label": i, "value": i} for i in ["静态数据", "动态数据", "URL"]
+                ],
+                "style": {"width": "100%"},
+                "span": 12,
+            },  # 一行两个
+            {
+                "name": "图片大小",
+                "component": "AntdInputNumber",
+                "label": "图片大小",
+                "style": {"width": "100%"},
+                "span": 12,
+            },  # 一行两个
+            {"name": "base64", "component": "AntdInput", "label": "base64"},  # 默认一行
+        ],
+        "default_values": lambda data: {
+            "组件ID": data["id"],
+            "X": data["坐标"]["x"],
+            "Y": data["坐标"]["y"],
+            "数据类型": "静态数据",
+            "图片大小": 100,
+            "base64": "base64",
         },
     },
 }
@@ -426,6 +509,14 @@ def create_form_item(
         ),
         "TableEditor": lambda **kwargs: fuc.FefferyDiv(
             [
+                fuc.FefferyStyle(
+                    rawStyle="""
+                        .table-row-class .ant-table-cell{
+                            padding: 0 !important;
+                            margin: 0 !important;
+                        }
+                    """
+                ),
                 fac.AntdTable(
                     id=kwargs.get("id"),
                     columns=[
@@ -479,9 +570,10 @@ def create_form_item(
                         }
                         for i in table_data
                     ],
+                    className="table-row-class",
                     bordered=True,
                     pagination=False,
-                )
+                ),
             ],
             className={"ant-table-cell": {"padding": "0px"}},
         ),

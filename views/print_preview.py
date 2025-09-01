@@ -4,6 +4,7 @@ import feffery_utils_components as fuc
 import feffery_antd_components as fac
 from feffery_dash_utils.style_utils import style
 from yarl import URL
+import json
 
 from loguru import logger
 
@@ -19,15 +20,13 @@ from models.drag_and_drop_m import (
 from configs.drag_and_drop_config import (
     render_component,
 )
+from configs.drag_and_drop_config import json_data
 
 import callbacks.print_preview_c
 
-# 导入测试参数
-from configs.demo_config import Demo_Config
-
 
 # http://127.0.0.1:6969/print_preview?template=打印模板1&order_ID=12345
-def PrintPreview(href):
+def PrintPreview(href, data):
     url_href = URL(href)
     get_query = url_href.query
     if get_query:
@@ -35,13 +34,17 @@ def PrintPreview(href):
         # 模板名称
         template_name = get_query.get("template")
         # 获取数据库订单数据data
-        order_ID = get_query.get("order_ID")
-        logger.info(f"订单ID：{order_ID}")
+        order_ID = get_query.get("order_id")
+        # logger.info(f"ID：{order_ID}")
+        json_data_ = json_data.get(order_ID, data)
         # 模拟数据
-        json_data = Demo_Config.data
+        # json_data_ = data
         # ===============================================================
+        if not json_data_ and order_ID != "demo":
+            return fac.AntdResult(
+                title="打印数据已过期", subTitle=template_name, status="error"
+            )
 
-        # print("这是输入的json数据", json_data)
         try:
             # 创建数据库会话
             # - Session() 生成一个新的数据库会话实例，用于执行查询
@@ -77,7 +80,7 @@ def PrintPreview(href):
                     component.component_id,  # 组件的唯一标识符
                     component.layout_data,  # 组件的布局数据（JSON 格式）
                     disableDragging=True,  # 新增：禁用拖拽功能
-                    json_data=json_data,  # 新增：传递 JSON 数据
+                    json_data=json_data_,  # 新增：传递 JSON 数据
                 )
                 # 如果渲染成功，则添加到列表中
                 if rendered_comp:
@@ -122,13 +125,21 @@ def PrintPreview(href):
                         fuc.FefferyDom2Image(id="print-target"),
                         fac.AntdSpace(
                             [
+                                # 执行JS
                                 fuc.FefferyExecuteJs(id="print-js-window"),
                                 # 元素转图片
                                 fuc.FefferyDom2Image(id="print-target-window"),
-                                fac.AntdButton(
-                                    "弹窗打印",
-                                    id="print-popup-window",
-                                    type="primary",
+                                # 消息反馈埋点
+                                fac.Fragment(id="msg-feedback"),
+                                # 弹窗打印
+                                fac.AntdTooltip(
+                                    fac.AntdButton(
+                                        "弹窗打印",
+                                        id="print-popup-window",
+                                        type="primary",
+                                    ),
+                                    title="自行选择纸张大小，打印方向",
+                                    placement="right",
                                 ),
                                 fac.AntdButton(
                                     "PDF打印",
@@ -149,7 +160,7 @@ def PrintPreview(href):
                                     id="print-target-ws",
                                     type="primary",
                                     autoSpin=True,
-                                    loadingChildren="连接中",
+                                    loadingChildren="连接服务中",
                                 ),
                                 fac.AntdCompact(
                                     [

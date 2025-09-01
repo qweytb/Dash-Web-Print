@@ -6,20 +6,35 @@ import json
 from feffery_dash_utils.style_utils import style
 import feffery_utils_components as fuc
 import feffery_antd_components as fac
+from yarl import URL
 
 from uuid import uuid4
 
 from utils.ba64_pdf import base64_to_pdf_base64
 
+# 从 数据文件导入
+from models.drag_and_drop_m import (
+    PaperSize,
+    Session,
+)
+
 
 # 路由里面渲染的组件，打印指定元素ding
 @app.callback(
     Output("print-target", "targetSelector"),
+    Output("msg-feedback", "children"),
     Input("print-target-trigger", "nClicks"),
+    State("websocket-print", "state"),
     prevent_initial_call=True,  # 注释掉实现自动打印
 )
-def get_print_target(静默):
-    return "#print-preview-container"
+def get_print_target(静默, state):
+    if state == "open":
+        return "#print-preview-container", dash.no_update
+    else:
+        return dash.no_update, fac.AntdMessage(
+            content="打印机服务没有安装，无法使用",
+            type="error",
+        )
 
 
 # 获取转换好的图片消息，发送给打印客户端
@@ -85,9 +100,9 @@ def get_printers_list(responseResult):
 )
 def get_ws_status(state, nClicks):
     if state == "open":
-        return "已连接", False, dash.no_update
+        return "服务已连接", False, dash.no_update
     elif state == "connecting":
-        return "连接中", True, dash.no_update
+        return "连接服务中", True, dash.no_update
     elif state == "closed":
         return "断开连接（点击重连）", False, "connect"  # （重新连接）
     elif state == "closing":
@@ -123,15 +138,7 @@ def get_print_target_2(nClicks):
     prevent_initial_call=True,
 )
 def execute_js_demo_2(screenshotResult):
-    data = screenshotResult.get("dataUrl")  # .split("base64,")[-1]
-
-    # import base64
-
-    # img_bytes = base64.b64decode(data.split("base64,")[-1])
-
-    # with open("output.jpg", "wb") as f:
-    #     f.write(img_bytes)
-    # print("已保存为 output.jpg")
+    data = screenshotResult.get("dataUrl")
 
     # 创建包含 base64 图像的 HTML 内容
     html_content = f"""
@@ -161,23 +168,35 @@ def execute_js_demo_2(screenshotResult):
 @app.callback(
     Output("print-js-window", "jsString", allow_duplicate=True),
     Input("print-target-trigger-pdf", "nClicks"),
+    Input("root-url", "href"),
     prevent_initial_call=True,
 )
-def execute_js_demo_2_pdf(nClicks):
+def execute_js_demo_2_pdf(nClicks, href):
     if not nClicks:
         return dash.no_update
     import uuid
 
-    return (
-        f'''
-        var a = "{uuid.uuid4()}" // 为保证jsString每次都有变动
-        var element = document.getElementById("print-preview-container")
-        '''
-        """
-        html2pdf()
-        .set({
-            image: { type: 'jpeg', quality: 1 },
-            html2canvas: {
+    url_href = URL(href)
+    get_query = url_href.query
+    # 模板名称
+    template_name = get_query.get("template")
+    session = Session()
+    # 检查是否已有该模板的纸张大小记录
+    paper = session.query(PaperSize).filter_by(template_name=template_name).first()
+    session.close()
+    # a5打印
+    a5 = """jsPDF: { unit: 'mm', format: 'a5', orientation: 'l' }"""
+    jsPDF = """jsPDF: { unit: 'mm', format: 'a4', orientation: 'p' }"""  # 默认
+    if paper.type_name == "A5":
+        jsPDF = a5
+
+    js_code = f"""
+    var a = "{uuid.uuid4()}"; // 保证jsString每次都有变动
+    var element = document.getElementById("print-preview-container");
+    html2pdf()
+        .set({{
+            image: {{ type: 'jpeg', quality: 1 }},
+            html2canvas: {{
                 dpi: 192,
                 scale: 1,
                 logging: true,
@@ -186,22 +205,23 @@ def execute_js_demo_2_pdf(nClicks):
                 scrollX: 0,
                 scrollY: 0,
                 width: element.offsetWidth,
-                pagebreak: { mode: ['avoid-all'] },
+                pagebreak: {{ mode: ['avoid-all'] }},
                 height: element.scrollHeight
-            },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'p' }
-        })
+            }},
+            {jsPDF}
+        }})
         .from(element)
         .toPdf()
         .get('pdf')
-        .then(function(pdf) {
-            if (pdf.getNumberOfPages() > 1) {
-            pdf.deletePage(2); // 删除第二页
-            }
+        .then(function(pdf) {{
+            if (pdf.getNumberOfPages() > 1) {{
+                pdf.deletePage(2); // 删除第二页
+            }}
             return pdf.output('bloburl');
-        })
-        .then(function(pdfUrl){
+        }})
+        .then(function(pdfUrl){{
             window.open(pdfUrl, '_blank');
-        });
-        """
-    )
+        }});
+    """
+
+    return js_code
